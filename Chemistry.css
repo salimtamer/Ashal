@@ -151,18 +151,3 @@ max-height: 400vh;
 .show {
       display: block;
     }
-
-
-/* #extratext{
-max-height: 400vh;
-}
- */
-
- .extra-text {
-      display: none;
-      margin-top: 10px;
-    }
-
-.show {
-      display: block;
-    }
