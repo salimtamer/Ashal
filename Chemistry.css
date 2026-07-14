@@ -90,7 +90,7 @@ aside{
   left: 0;
   width:130px;
   width: 100px;
-  height: 95vh; 
+  height: 188vh; 
   background-color:#D5E5FF;
   color:#7994D2;
   padding: 20px;
@@ -104,7 +104,7 @@ aside{
 }
 .side{
     display: flex;
-    margin-bottom: 53px;
+height: 13%;
 }
 .side a{
     
@@ -122,13 +122,13 @@ aside{
 footer{
   /* margin-left: auto; */
   position:absolute;
-  bottom: 0;
+
   left: 0;
   width:100%;
   /* height: 80px; */
   background-color: #161653;
   color: rgb(255, 255, 255);
-  text-align: center;
+  /* text-align: center; */
   line-height: 60px;
   /* z-index: 1000; */
 }
@@ -136,6 +136,21 @@ footer{
 footer p{
     margin-left: 200px;
 }
+
+
+/* #extratext{
+max-height: 400vh;
+}
+ */
+
+ .extra-text {
+      display: none;
+      margin-top: 10px;
+    }
+
+.show {
+      display: block;
+    }
 
 
 /* #extratext{
