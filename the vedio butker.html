@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ashal | Unlimited English Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+
+        body { background: #050505; color: #f8fafc; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .arow {top: 0; left: 0; position: fixed; z-index: 50; padding: 20px;}
+         .arow a { font-size: 24px; color: #ffffff; text-decoration: none; }
+         .arow a:hover { color: #9b00ff; }
+         .glass { background: #111; border: 1px solid #222; }
+        .glass { background: #111; border: 1px solid #222; }
+        .video-card { transition: 0.3s ease; border: 1px solid rgba(255,255,255,0.05); }
+        .video-card:hover { border-color: #240055; transform: translateY(-5px); background: #161616; }
+        .loader { border: 3px solid #333; border-top: 3px solid #62008f; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    <!-- <link rel="stylesheet" href="../css/lesson-pages.css"> -->
+</head>
+<body class="p-6 md:p-12">
+<div class="arow">
+        <a href="index.html">⮜</a>
+</div>
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-12 text-center">
+            <h1 class="text-5xl font-black text-blue-700 tracking-tighter mb-2">the video<span class="text-white">butler  </span></h1>
+            <p class="text-slate-500 uppercase tracking-widest text-xs font-bold">Infinite  Education Feed</p>
+        </div>
+
+        <div class="sticky top-6 z-50 mb-12">
+            <input id="query" type="text" oninput="debounceSearch()"
+                class="w-full bg-black/90 backdrop-blur-2xl border border-white/10 p-7 rounded-3xl outline-none focus:ring-2 ring-blue-600 text-xl text-white shadow-2xl"
+                placeholder="What do you want to learn? (e.g. Astronomy)...">
+        </div>
+
+        <div id="dict-box" class="hidden mb-12 glass p-10 rounded-3xl border-l-8 border-blue-600 animate-in">
+            <h2 id="dict-title" class="text-4xl font-bold capitalize text-white mb-4"></h2>
+            <p id="dict-content" class="text-blue-100 italic text-xl leading-relaxed opacity-90"></p>
+        </div>
+
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+
+        <div id="loading-area" class="py-20 flex flex-col items-center justify-center opacity-0">
+            <div class="loader mb-4"></div>
+            <p class="text-slate-500 font-bold">Scanning for lessons...</p>
+        </div>
+    </div>
+
+    <script>
+        const YT_KEY = "AIzaSyDlySBizNcFpJXEw_6ayYruSXDXs_4Xrdw";
+        let timer;
+        let nextPageToken = "";
+        let isFetching = false;
+
+        // Reset and trigger new search when user types
+        function debounceSearch() {
+            nextPageToken = ""; 
+            document.getElementById('results').innerHTML = ""; 
+            clearTimeout(timer);
+            timer = setTimeout(() => executeSearch(false), 1000);
+        }
+
+        async function executeSearch(isScrolling = false) {
+            const word = document.getElementById('query').value;
+            if (word.length < 1 || isFetching) return;
+
+            isFetching = true;
+            const loaderArea = document.getElementById('loading-area');
+            loaderArea.style.opacity = "1";
+
+            // 1. Oxford Dictionary Lookup (Only on fresh search)
+            if (!isScrolling) {
+                try {
+                    const oxRes = await fetch(`http://localhost:3000/api/lookup/${word}`);
+                    if (!oxRes.ok) throw new Error();
+                    const oxData = await oxRes.json();
+                    
+                    document.getElementById('dict-box').classList.remove('hidden');
+                    document.getElementById('dict-title').innerText = word;
+                    document.getElementById('dict-content').innerText = oxData.definition;
+                } catch (e) { 
+                    document.getElementById('dict-box').classList.add('hidden'); 
+                }
+            }
+
+            // 2. YouTube Search (Unlimited/English Filtered)
+            let ytUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&type=video&relevanceLanguage=en&q=${encodeURIComponent(word + " educational tutorial lesson")}&key=${YT_KEY}`;
+            
+            // Add pagination token if we are scrolling
+            if (isScrolling && nextPageToken) {
+                ytUrl += `&pageToken=${nextPageToken}`;
+            }
+
+            try {
+                const res = await fetch(ytUrl);
+                const data = await res.json();
+                
+                // Save the token for the next scroll
+                nextPageToken = data.nextPageToken || "";
+
+                const videoHTML = data.items.map(item => `
+                    <div class="video-card glass p-5 rounded-[2rem] cursor-pointer" 
+                        //  onclick="window.open('https://youtube.com/watch?v=${item.id.videoId}', )">
+                        <img src="${item.snippet.thumbnails.high.url}" class="w-full aspect-video object-cover rounded-2xl mb-4 shadow-lg">
+                        <h4 class="font-bold text-base line-clamp-2 text-white leading-snug">${item.snippet.title}</h4>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-blue-500 text-[11px] font-black uppercase tracking-widest truncate w-32">${item.snippet.channelTitle}</span>
+                            <span class="bg-blue-600/10 text-blue-400 text-[9px] px-2 py-1 rounded border border-blue-500/20 font-bold uppercase">English Lesson</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('results').insertAdjacentHTML('beforeend', videoHTML);
+            } catch (e) {
+                console.error("YouTube API Error. Check Key/Quota.");
+            }
+
+            isFetching = false;
+            loaderArea.style.opacity = "0";
+        }
+
+        // --- INFINITE SCROLL DETECTION ---
+        window.onscroll = function() {
+            // If user scrolls within 1000px of the bottom, load more
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                if (nextPageToken && !isFetching) {
+                    executeSearch(true);
+                }
+            }
+        };
+    </script>
+    <script src="server.js"></script>
+</body>
+</html>

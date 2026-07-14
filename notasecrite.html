@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shhhhhh</title>
+    <!-- This keeps the page out of Google search results -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <style>
+body { font-family: 'Courier New', monospace; background: #1a1a1a; color: #00ff00; text-align: center; padding-top: 50px; }
+        #secret-content { display: none; } /* Hidden by default */
+        input { padding: 10px; border: 1px solid #00ff00; background: black; color: #00ff00; }
+        .button { padding: 10px; background: #00ff00; border: none; cursor: pointer; }
+
+
+        #boot-screen{
+    background:black;
+    color:#00ff66;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#bootText{
+    font-family:"Courier New",monospace;
+    font-size:20px;
+    white-space:pre-wrap;
+}
+
+
+body{
+    margin:0;
+    background:#000;
+    color:#00ff66;
+    font-family:"Courier New", monospace;
+}
+
+#boot-screen{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+#terminal{
+    width:700px;
+    max-width:90%;
+    min-height:250px;
+    font-size:18px;
+    white-space:pre-wrap;
+}
+
+.progress{
+    width:700px;
+    max-width:90%;
+    height:8px;
+    background:#222;
+    margin-top:20px;
+}
+
+#bar{
+    width:0%;
+    height:100%;
+    background:#00ff66;
+}
+    </style>
+</head>
+<body>
+    <div class="arow">
+        <a href="index.html" class="back-arrow">⮜ Return to Surface</a>
+    </div>
+    <div id="login-box">
+<h1>Entry point</h1>
+        <p>Enter the secret code to access the hidden content:</p>
+        <input type="password" id="passInput"> 
+        <button class="button" onclick="checkpassword()">Access</button>
+    </div>
+
+    <div id="secret-content">
+<h1>SPHYINX UNDERGRUN</h1>
+<p>-----------------------------------------------------------------</P>
+<p>-----------------------------------------------------------------</P>
+
+<h3>ACCESS LEVEL:AUTHORIZED</h3>
+<h4>Welcome, Explorer</h4>
+        <p>you found something that was<span style="color: red;">n't supposed to be found.</span> </p>
+        <button id="continueBtn"> <span style="color: red; background-color: none;">> Continue</span></button>
+    </div>
+
+
+
+<div id="boot-screen">
+<pre id="terminal"></pre>
+<div class="progress">
+<div id="bar"></div>
+</div>
+</div>
+
+<script>
+const lines = [
+    "Initializing SPHINX...",
+    "Loading encrypted files...",
+    "Decrypting archives...",
+    "Checking authorization...",
+    "Connecting...",
+    "Access Granted.",
+    "",
+    "Welcome , Explorer."
+];
+
+
+
+document.getElementById("continueBtn").addEventListener("click", () => {
+
+    document.getElementById("secret-content").style.display = "none";
+    document.getElementById("boot-screen").style.display = "flex";
+
+    line = 0;
+    terminal.textContent = "";
+    bar.style.width = "0%";
+
+    nextLine();
+
+});
+    // const terminal = document.getElementById("bootText");
+
+//     let i = 0;
+
+//     const timer = setInterval(() => {
+
+//         terminal.textContent += lines[i] + "\n";
+
+//         i++;
+
+//         if (i >= lines.length) {
+//             clearInterval(timer);
+
+//             // Open dashboard after 1 second
+//             setTimeout(() => {
+//                 window.location.href = "dashboard.html";
+//             },1000);
+//         }
+
+//     },500);
+
+// });
+
+
+
+    function checkpassword(){
+        const password = document.getElementById('passInput').value;
+        if (password==="fightclub"){
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('secret-content').style.display = 'block';
+        } else {
+            alert('Access Denied.');
+        }
+    }
+
+    const terminal = document.getElementById("terminal");
+const bar = document.getElementById("bar");
+
+const boot = [
+    "[ OK ] Initializing SPHINX...",
+    "[ OK ] Loading AI Core...",
+    "[ OK ] Decrypting Archives...",
+    "[ OK ] Loading Student Vault...",
+    "[ OK ] Loading Developer Vault...",
+    "[ OK ] Authentication Complete.",
+    "",
+    "ACCESS GRANTED.",
+    "Welcome , Explorer."
+];
+
+let line = 0;
+
+function nextLine(){
+
+    if(line >= boot.length){
+
+        setTimeout(()=>{
+           open("dashboard.html","_self");
+        },1000);
+
+        return;
+    }
+
+    terminal.textContent += boot[line] + "\n";
+
+    bar.style.width = ((line + 1) / boot.length * 100) + "%";
+
+    line++;
+
+    setTimeout(nextLine,500);
+
+}
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+.backarow{
+  left: 0px;
+  top: 0px;
+  text-decoration: none;
+  color: #000;
+  
+}
+
+.coming-soon {
+  padding: 25px;
+  border: 2px dashed #888;
+  border-radius: 12px;
+  text-align: center;
+  margin: 20px 0;
+  background: #f9f9f9;
+  transition: 0.3s;
+}
+
+.coming-soon:hover {
+  border-color: #000;
+  transform: scale(1.02);
+}
